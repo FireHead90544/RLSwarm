@@ -22,26 +22,26 @@ This code may require different dependencies than the main project. It is recomm
 ### 1. Manual Control
 Run the simulation in manual mode to control an agent with arrow keys and test the physics/environment.
 ```bash
-python neuralswarm.py --manual
+uv run neuralswarm.py --manual
 ```
 
 ### 2. Train DQN Agent
 Start training the Deep Q-Network from scratch. Checkpoints will be saved to `checkpoints/`.
 ```bash
-python rl/train.py --checkpoint checkpoints/best_model.pth
+uv run rl/train.py --checkpoint checkpoints/best_model.pth
 ```
 *Note: You can resume training by modifying the script to load a checkpoint.*
 
 ### 3. Watch Trained Agent
 Visualize a pre-trained model interacting with the environment.
 ```bash
-python rl/play.py --model checkpoints/best_model.pth
+uv run rl/play.py --model checkpoints/best_model.pth
 ```
 
 ### 4. Generate Replay Video
 Run inference and save the output as a video file.
 ```bash
-python inference.py --model checkpoints/best_model.pth --output replay.mp4
+uv run inference.py --model checkpoints/best_model.pth --output replay.mp4
 ```
 
 ## Project Goal
