@@ -4,7 +4,7 @@ Official implementation of the research paper **"Policy Optimization for Scalabl
 
 This repository contains a custom continuous physics-based simulation environment for multi-agent swarm foraging and the implementation of Proximal Policy Optimization (PPO) to solve it.
 
-https://github.com/user-attachments/assets/1021fce7-2544-4f48-99f6-d97648871ca9
+![Demo (Downsampled)](https://github.com/user-attachments/assets/6e0987a6-cf92-433d-9357-197b4aa9e77c)
 
 ## 🚀 Features
 
