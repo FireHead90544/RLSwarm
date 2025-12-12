@@ -37,7 +37,7 @@ The `archived/dqn/` directory contains the original Deep Q-Network implementatio
 1.  **Clone the repository**:
     ```bash
     git clone https://github.com/FireHead90544/RLSwarm
-    cd NeuralSwarm
+    cd RLSwarm
     ```
 
 2.  **Install dependencies (using uv)**:
