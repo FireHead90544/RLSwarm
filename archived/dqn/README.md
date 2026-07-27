@@ -12,8 +12,17 @@ As detailed in the research paper, this DQN implementation struggled to converge
 
 - `core/`: Legacy environment implementation (older version of `SwarmEnv`).
 - `rl/`: DQN agent logic and training loop.
-- `experimentation/`: Scripts used for the comparative analysis and plotting.
-- `inference.py`: Script to run the trained DQN model.
+- `experimentation/`: Scripts used for the comparative analysis, evaluation, and plotting.
+  - `DQN_RESULTS.md`: Written summary of DQN evaluation results and DQN vs PPO comparison.
+  - `run_dqn_eval.py`: Evaluate a trained DQN checkpoint and export results to CSV.
+  - `plot_tensorboard.py`: Parse TensorBoard event files and generate training plots.
+  - `compare_dqn_ppo.py`: Load DQN and PPO results and produce a side-by-side comparison chart.
+  - `plots/`: Generated training and comparison plots (PNG).
+  - `results/`: CSV output from `run_dqn_eval.py`.
+- `checkpoints/`: Saved DQN model checkpoints (`.pt` files).
+- `runs/`: TensorBoard event logs from DQN training sessions.
+- `inference.py`: Script to run a trained DQN checkpoint and record a replay video.
+- `neuralswarm.py`: Entry point for the legacy simulation (manual or autonomous mode).
 
 ## ⚠️ Usage
 
@@ -22,8 +31,10 @@ This code may require different dependencies than the main project. It is recomm
 ### 1. Manual Control
 Run the simulation in manual mode to control an agent with arrow keys and test the physics/environment.
 ```bash
-uv run neuralswarm.py --manual
+# neuralswarm.py uses positional arguments: num_agents manual(1=True) debug(1=True)
+uv run neuralswarm.py 10 1 1
 ```
+*Positional args: `<num_agents>` `<manual: 1|0>` `<debug: 1|0>`. Defaults are `10 1 1` if omitted.*
 
 ### 2. Train DQN Agent
 Start training the Deep Q-Network from scratch. Checkpoints will be saved to `checkpoints/`.
@@ -90,20 +101,24 @@ The reinforcement learning part of the project is implemented using PyTorch.
 
 ## How to Run the Project
 
-- **`neuralswarm.py`:** Run this file to start the simulation. You can specify the number of agents and whether you want to control one of them manually.
+- **`neuralswarm.py`:** Run this file to start the simulation. You can specify the number of agents and whether you want to control one of them manually (positional argv).
 - **`rl/train.py`:** Execute this script to train the DQN model. You can also resume training from a checkpoint.
 - **`rl/play.py`:** Use this to watch a pre-trained model control the agents in the simulation.
 - **`inference.py`:** This script allows you to generate a video of a trained model's performance.
+- **`experimentation/run_dqn_eval.py`:** Evaluate a saved DQN checkpoint over multiple episodes and write metrics to CSV.
+- **`experimentation/plot_tensorboard.py`:** Parse the `runs/` TensorBoard logs and generate training diagnostic plots.
+- **`experimentation/compare_dqn_ppo.py`:** Load the DQN evaluation CSV and the PPO benchmark CSV to produce a comparative bar chart.
 
 ## File Breakdown
 
-- **`neuralswarm.py`**: Main entry point for the simulation.
-- **`inference.py`**: Generates a video of a trained model.
+- **`neuralswarm.py`**: Main entry point for the simulation (manual or autonomous).
+- **`inference.py`**: Generates an MP4 video of a trained DQN checkpoint using OpenCV.
 - **`core/`**: Contains the core simulation logic.
     - **`environment.py`**: Manages the simulation, agents, and their interactions.
     - **`agent.py`**: Defines the agent's behavior, sensors, and actions.
     - **`entities.py`**: Defines the `Food` class.
     - **`config.py`**: Configuration for the simulation environment.
+    - **`utils.py`**: Geometry helpers (`clamp`, `distance`, `normalize_vector`, `reflect_angle`).
 - **`rl/`**: Contains the reinforcement learning implementation.
     - **`train.py`**: The main script for training the DQN.
     - **`dqn_agent.py`**: Defines the agent that uses the DQN to select actions.
@@ -112,3 +127,11 @@ The reinforcement learning part of the project is implemented using PyTorch.
     - **`trainer.py`**: Handles the DQN training loop.
     - **`config.py`**: Hyperparameters for RL training.
     - **`play.py`**: Script to watch a trained model play.
+    - **`utils.py`**: Tensor conversion and epsilon-greedy action selection helpers.
+- **`experimentation/`**: Scripts for evaluation and comparative analysis.
+    - **`DQN_RESULTS.md`**: Written report of DQN evaluation and DQN vs PPO comparison findings.
+    - **`run_dqn_eval.py`**: Evaluates the DQN model over N episodes and saves metrics to `results/dqn_evaluation.csv`.
+    - **`plot_tensorboard.py`**: Reads `runs/` TensorBoard logs and saves training plots (loss, reward, epsilon) to `plots/`.
+    - **`compare_dqn_ppo.py`**: Compares DQN and PPO performance and saves `plots/dqn_vs_ppo_comparison.png`.
+- **`checkpoints/`**: Saved DQN model files (`.pt`). The primary checkpoint is `checkpoint_EP_4000.pt`.
+- **`runs/`**: TensorBoard event files from each DQN training session.

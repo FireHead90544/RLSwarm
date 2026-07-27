@@ -18,12 +18,26 @@ This repository contains a custom continuous physics-based simulation environmen
 ```
 .
 ├── env/                # Custom Swarm Environment
-├── models/             # Pre-trained models
-├── docs/               # Research Paper and Documentation
-├── train.py            # Training script
+│   ├── swarm_env.py    # Core Gymnasium environment
+│   └── wrappers.py     # SwarmVecEnv wrapper for SB3
+├── models/             # Pre-trained model checkpoints (.zip)
+├── experiments/        # Evaluation & benchmarking scripts
+│   ├── core.py         # Shared ExperimentRunner base class
+│   ├── runners/        # Individual experiment runners
+│   │   ├── scalability.py   # Scalability benchmark (A)
+│   │   ├── efficiency.py    # AI vs Random benchmark (C)
+│   │   └── human_vs_ai.py  # Human vs AI benchmark (D)
+│   ├── analysis/       # Plotting scripts and generated figures
+│   └── results/        # CSV results and final report
+├── docs/               # Documentation and demo assets
+│   └── TRAINING_GUIDE.md
+├── train.py            # Training script (PPO, checkpoint support)
 ├── play.py             # Inference/Visualization script
 ├── manual_control.py   # Human control script
-├── config.py           # Configuration parameters
+├── record_video.py     # Record a gameplay video to MP4
+├── check_env.py        # Validate environment compatibility with SB3
+├── test_train.py       # Smoke test: short training run
+├── config.py           # All hyperparameters and constants
 ├── requirements.txt    # Dependencies
 └── archived/           # Legacy code (DQN Baseline)
 ```
@@ -49,11 +63,11 @@ The `archived/dqn/` directory contains the original Deep Q-Network implementatio
 ## 🎮 Usage
 
 ### 1. Run Pre-trained Model
-Visualize the best performing PPO policy (remaining would be present in the github releases section):
+Visualize the best performing PPO policy (remaining checkpoints are in the `models/` directory):
 ```bash
 uv run play.py --model models/best_model.zip --fps 60
 ```
-*Controls: `TAB` to switch agent view, `D` to toggle debug mode.*
+*Controls: `TAB` to switch agent view, `D` to toggle debug mode, `R` to reset the environment, `ESC` to quit.*
 
 ### 2. Train from Scratch
 Start a new training session:
@@ -78,17 +92,39 @@ uv run train.py \
 ```
 *Check `config.py` to adjust hyperparameters.*
 
-### 3. Manual Control
-Test the environment yourself:
+### 4. Manual Control
+Test the environment yourself with keyboard input:
 ```bash
 uv run manual_control.py
 ```
-*Controls: Arrow keys to move, Tab to switch agents, D to toggle debug mode, R to reset the environment,ESC to quit*
+*Controls: Arrow keys to move/rotate, `TAB` to switch agents, `D` to toggle debug mode, `R` to reset the environment, `ESC` to quit.*
+
+### 5. Record a Video
+Record a gameplay video of the trained model to an MP4 file (requires `opencv-python`):
+```bash
+uv run record_video.py
+```
+*The script uses the model at `models/ppo_swarm_9771120_steps_reshaped` by default and saves `demo_debug.mp4` in the project root. Edit `record_video.py` to change the model path, output filename, or number of frames.*
+
+### 6. Validate the Environment
+Verify that the custom environment is compatible with Stable-Baselines3's API:
+```bash
+uv run check_env.py
+```
+*Runs two checks: the raw `SwarmEnv` API and the `SwarmVecEnv` wrapper used during training.*
+
+### 7. Smoke-Test Training
+Run a short end-to-end training pass (500 steps) to confirm everything is wired correctly:
+```bash
+uv run test_train.py
+```
+*The test model is saved and then immediately deleted. Useful after changes to the environment or config.*
 
 ## 📄 Documentation
 
 - [**Research Paper**](#): Full academic paper detailing the methodology and results. (Releasing when published)
-- [**Training Guide**](docs/TRAINING_GUIDE.md): Detailed guide on the training curriculum and hyperparameters.
+- [**Training Guide**](docs/TRAINING_GUIDE.md): Detailed guide on the training curriculum, reward tuning, and hyperparameters.
+- [**Experiment Results**](experiments/results/FINAL_REPORT.md): Final research report covering scalability, efficiency, and human vs. AI benchmarks.
 
 ## 🤝 Contributing
 

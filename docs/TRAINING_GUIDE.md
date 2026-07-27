@@ -82,7 +82,24 @@ uv run play.py --model models/ppo_swarm_10621120_steps.zip --fps 60
 # - ESC: Quit
 ```
 
-### 4. Monitor Training (TensorBoard)
+### 4. Record a Gameplay Video
+Capture a full episode to MP4 using OpenCV (requires `opencv-python`):
+```bash
+uv run record_video.py
+```
+*Saves `demo_debug.mp4` (2500 frames @ 60 FPS) to the project root. Edit `record_video.py` to change the model path, output filename, frame count, or resolution.*
+
+### 5. Validate Environment & Smoke-Test Training
+Before a long training run, verify the environment API and the training pipeline:
+```bash
+# Check raw SwarmEnv + SwarmVecEnv compatibility with SB3
+uv run check_env.py
+
+# Short end-to-end training smoke test (500 steps, auto-cleans up)
+uv run test_train.py
+```
+
+### 6. Monitor Training (TensorBoard)
 ```bash
 tensorboard --logdir logs/
 
@@ -242,7 +259,7 @@ REWARD_STEP = -0.02    # Even more efficiency pressure
 ## 📁 Project Structure
 
 ```
-neural_swarm_ppo/
+.
 ├── env/
 │   ├── swarm_env.py       # Core Gymnasium environment
 │   └── wrappers.py        # SwarmVecEnv wrapper for SB3
@@ -250,12 +267,23 @@ neural_swarm_ppo/
 │   └── ppo_swarm_*.zip
 ├── logs/                  # TensorBoard logs
 │   └── PPO_*/
+├── experiments/           # Evaluation & benchmarking
+│   ├── core.py            # Shared ExperimentRunner base class
+│   ├── runners/
+│   │   ├── scalability.py # Scalability benchmark (agent count sweep)
+│   │   ├── efficiency.py  # AI vs Random baseline comparison
+│   │   └── human_vs_ai.py # Human vs AI 1v1 benchmark
+│   ├── analysis/          # Plotting scripts and generated figures
+│   └── results/           # CSV exports and FINAL_REPORT.md
+├── docs/
+│   └── TRAINING_GUIDE.md  # This file
 ├── config.py              # All hyperparameters
 ├── train.py               # Training script (with checkpoint support)
 ├── play.py                # Visualization tool
-├── manual_control.py      # Manual testing
-├── check_env.py           # Environment validation
-├── TRAINING_GUIDE.md      # This file
+├── manual_control.py      # Manual testing / human baseline
+├── record_video.py        # Record gameplay to MP4
+├── check_env.py           # Environment validation (SB3 API check)
+├── test_train.py          # Smoke test: short training run
 └── README.md              # Quick reference
 ```
 
@@ -265,13 +293,9 @@ neural_swarm_ppo/
 
 ### Setup
 ```python
-# Mount Drive
-from google.colab import drive
-drive.mount('/content/drive')
-
-# Extract project
-!unzip -q /content/drive/MyDrive/neural_swarm_ppo.zip -d /content/
-%cd /content/neural_swarm_ppo
+# Clone the repository
+!git clone https://github.com/FireHead90544/RLSwarm
+%cd RLSwarm
 
 # Install dependencies
 !pip install -q stable-baselines3[extra] shimmy gymnasium pygame tensorboard
@@ -332,6 +356,25 @@ print(f"GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'C
 5. **Use Checkpoints**: Test multiple saves to find best model
 6. **Episode Limits Matter**: Without truncation, no TensorBoard metrics
 7. **GPU Not Always Better**: PPO+MLP runs faster on CPU
+
+---
+
+## 🔬 Benchmarking & Experiments
+
+The `experiments/` directory contains runners for the three benchmark experiments reported in the paper. Run them from the project root:
+
+```bash
+# Experiment A: Scalability (test trained policy on 3, 5, 10, 15 agents)
+uv run -m experiments.runners.scalability --model models/best_model.zip
+
+# Experiment C: Efficiency (AI-trained vs random baseline, 10 episodes each)
+uv run -m experiments.runners.efficiency --model models/best_model.zip
+
+# Experiment D: Human vs AI (you play 5 episodes, then AI plays 5)
+uv run -m experiments.runners.human_vs_ai --model models/best_model.zip
+```
+
+Results (CSV) are written to `experiments/results/`. Plots can be regenerated from the analysis scripts in `experiments/analysis/`.
 
 ---
 
