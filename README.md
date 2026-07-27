@@ -125,6 +125,8 @@ uv run test_train.py
 - [**Research Paper**](#): Full academic paper detailing the methodology and results. (Releasing when published)
 - [**Training Guide**](docs/TRAINING_GUIDE.md): Detailed guide on the training curriculum, reward tuning, and hyperparameters.
 - [**Experiment Results**](experiments/results/FINAL_REPORT.md): Final research report covering scalability, efficiency, and human vs. AI benchmarks.
+- [**Minor Project Report**](https://docs.google.com/document/d/1kDFdspawK4tUAYsb6PTtx_wNmlxHpP5YUl4C0QgFVrg/view): Project report for my graduation minor project, DeepQSwarm (`archived/dqn`).
+- [**Minor Project Presentation**](https://docs.google.com/presentation/d/1Byhoq1_uZZA1FuMzI914_pYaz-5iyIJxKhstyFsxyOE/view): Project briefing for my graduation minor project, DeepQSwarm (`archived/dqn`).
 
 ## 🤝 Contributing
 
